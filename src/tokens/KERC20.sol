@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {ERC20} from "lib/openzeppelin-contracts/contracts/token/ERC20";
+import {ERC20Upgradeable} from "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
-contract KERC20 is ERC20 {
-    function initialize() external {}
-}
+contract KERC20 is ERC20Upgradeable {}

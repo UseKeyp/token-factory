@@ -23,36 +23,31 @@ contract TokenFactory is IInitData {
     function deployERC20(
         uint256 salt,
         ERC20Data calldata data
-    ) external returns (address) {
-        address clone = deploy(kerc20, salt);
+    ) external returns (address clone) {
+        clone = deploy(kerc20, salt);
         KERC20(clone).initialize(data);
-        return clone;
     }
 
     function deployERC721(
         uint256 salt,
         ERC721Data calldata data
-    ) external returns (address) {
-        address clone = deploy(kerc721, salt);
+    ) external returns (address clone) {
+        clone = deploy(kerc721, salt);
         KERC721(clone).initialize(data);
-        return clone;
     }
 
     function deployERC1155(
         uint256 salt,
-        string memory uri_
-    ) external returns (address) {
-        address clone = deploy(kerc1155, salt);
-        KERC1155(clone).initialize(uri_);
-        return clone;
+        string memory uri
+    ) external returns (address clone) {
+        clone = deploy(kerc1155, salt);
+        KERC1155(clone).initialize(uri);
     }
 
     function deploy(
         bytes memory bytecode,
         uint256 salt
-    ) public payable returns (address) {
-        address addr;
-
+    ) public payable returns (address addr) {
         assembly {
             // create2(v = ETH, p = pointer start, n = size of code, s = salt)
             addr := create2(
@@ -65,9 +60,7 @@ contract TokenFactory is IInitData {
                 revert(0, 0)
             }
         }
-
         emit DeployedToken(addr, salt);
-        return addr;
     }
 
     /**

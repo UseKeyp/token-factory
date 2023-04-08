@@ -60,6 +60,10 @@ contract KERC721 is ERC721Upgradeable, OwnableUpgradeable, IInitData {
         emit Mint(recipient, id);
     }
 
+    function getTokenId() external view returns (uint256) {
+        return _tokenIds.current();
+    }
+
     function updateUri(
         uint256 id,
         string memory uri
@@ -72,18 +76,14 @@ contract KERC721 is ERC721Upgradeable, OwnableUpgradeable, IInitData {
         immutableUri = true;
     }
 
-    function getTokenId() external view returns (uint256) {
-        return _tokenIds.current();
-    }
-
-    function _setTokenURI(uint256 tokenId, string memory uri) internal {
-        tokenURIs[tokenId] = uri;
-    }
-
     function tokenURI(
         uint256 tokenId
     ) public view override returns (string memory) {
         _requireMinted(tokenId);
         return tokenURIs[tokenId];
+    }
+
+    function _setTokenURI(uint256 tokenId, string memory uri) internal {
+        tokenURIs[tokenId] = uri;
     }
 }

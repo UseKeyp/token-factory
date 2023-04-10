@@ -6,33 +6,30 @@ import {OwnableUpgradeable} from "lib/openzeppelin-contracts-upgradeable/contrac
 import {IInitData} from "src/interfaces/IInitData.sol";
 
 contract KERC20 is ERC20Upgradeable, OwnableUpgradeable, IInitData {
-    address public _owner;
+    // Infinite or finite token suppply
     bool internal finiteSupply;
 
-    modifier checkSupply() {
-        require(!finiteSupply, "Cannot increase token supply");
-        _;
-    }
+    event Mint(address recipient, uint256 amount);
 
+    /**
+     * @dev Initialize, set owner of contract, set supply to inifinit or finite
+     */
     function initialize(ERC20Data calldata data) external initializer {
-        // set admin of contract
         __Ownable_init();
         transferOwnership(data.admin);
 
-        // initialize ERC20 token
         __ERC20_init(data.name, data.symbol);
 
-        // set infinite or finite token suppply
         if (data.finiteSupply) finiteSupply = true;
-
-        // mint initial or total token supplyx
         _mint(data.recipient, data.initSupply);
     }
 
-    function mint(
-        address recipient,
-        uint256 amount
-    ) external onlyOwner checkSupply {
+    /**
+     * @dev Mint token to recipient
+     */
+    function mint(address recipient, uint256 amount) external onlyOwner {
+        require(!finiteSupply, "Cannot increase token supply");
         _mint(recipient, amount);
+        emit Mint(recipient, amount);
     }
 }

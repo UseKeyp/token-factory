@@ -20,6 +20,8 @@ contract CreateTokenScript is Script, IInitData {
 
     bytes32 internal constant SALT = bytes32(abi.encode(0x777));
 
+    address internal admin = 0xD5d1bb95259Fe2c5a84da04D1Aa682C71A1B8C0E;
+
     function setUp() public {
         createERC20InitData();
         createERC721InitData();
@@ -28,7 +30,7 @@ contract CreateTokenScript is Script, IInitData {
     function run() public {
         vm.startBroadcast();
 
-        factory = new TokenFactory{salt: SALT}();
+        factory = new TokenFactory{salt: SALT}(admin);
 
         factory.deployERC20(444, erc20data);
 

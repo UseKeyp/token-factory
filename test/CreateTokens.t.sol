@@ -12,8 +12,10 @@ contract CreateTokensTest is Test, IInitData {
     ERC20Data erc20data;
     ERC721Data erc721data;
 
+    address internal admin = 0xD5d1bb95259Fe2c5a84da04D1Aa682C71A1B8C0E;
+
     function setUp() public {
-        factory = new TokenFactory();
+        factory = new TokenFactory(admin);
         emit log_named_address("Factory:", address(factory));
 
         createERC20InitData();

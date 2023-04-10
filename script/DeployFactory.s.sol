@@ -4,17 +4,17 @@ pragma solidity ^0.8.13;
 import "forge-std/Script.sol";
 import {TokenFactory} from "src/TokenFactory.sol";
 
-// forge script script/CreateToken.s.sol:CreateTokenScript --rpc-url $RUG --private-key $PK --broadcast --verify --etherscan-api-key $EK -vvvv
+// forge script script/DeployFactory.s.sol:DeployFactoryScript --rpc-url $RUG --private-key $PK --broadcast --verify --etherscan-api-key $EK -vvvv
 
-contract CreateTokenScript is Script {
-    TokenFactory public factory;
-
+contract DeployFactoryScript is Script {
     bytes32 internal constant SALT = bytes32(abi.encode(0xceeb));
+
+    address internal admin = 0xD5d1bb95259Fe2c5a84da04D1Aa682C71A1B8C0E;
 
     function run() public {
         vm.startBroadcast();
 
-        factory = new TokenFactory{salt: SALT}();
+        new TokenFactory{salt: SALT}(admin);
 
         vm.stopBroadcast();
     }

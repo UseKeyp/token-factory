@@ -18,5 +18,10 @@ interface IInitData {
         string symbol;
     }
 
-    // struct ERC1155Data {}
+    struct ERC1155Data {
+        address admin;
+        string name;
+        string symbol;
+        string uri;
+    }
 }

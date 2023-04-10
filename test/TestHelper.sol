@@ -11,11 +11,9 @@ contract TestHelper is Test, IInitData {
     uint256 public constant SALT1 = 0x1111;
     uint256 public constant SALT2 = 0x2222;
     uint256 public constant SALT3 = 0x3333;
-    uint256 public constant SALT4 = 0x4444;
 
     TokenFactory public factory;
-
-    address internal admin = 0xD5d1bb95259Fe2c5a84da04D1Aa682C71A1B8C0E;
+    address admin = 0xD5d1bb95259Fe2c5a84da04D1Aa682C71A1B8C0E;
 
     address deployer = address(this);
     address alice = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;

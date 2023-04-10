@@ -8,32 +8,62 @@ import {KERC1155} from "src/tokens/KERC1155.sol";
 
 contract KERC1155Test is TestHelper {
     ERC1155Data public data1;
-    ERC1155Data public data2;
 
     KERC1155 public token1;
-    KERC1155 public token2;
 
     function setUp() public override {
         factory = new TokenFactory(admin);
         createInitData();
 
         token1 = KERC1155(factory.deployERC1155(SALT1, data1));
-        token2 = KERC1155(factory.deployERC1155(SALT2, data2));
+    }
+
+    /**
+     * @dev Only admin should be able to createAndmint
+     */
+    function testCreateAndMinPermissions() public {
+        vm.startPrank(alice);
+
+        token1.createAndMint(bob, 100, 0);
+
+        uint256 Abal = token1.balanceOf(alice, 1);
+        assertEq(Abal, 0);
+
+        uint256 Bbal = token1.balanceOf(bob, 1);
+        assertEq(Bbal, 100);
+
+        vm.stopPrank();
+    }
+
+    /**
+     * @dev Non-admin should not be able to createAndmint
+     */
+    function testCreateAndMintPermissionsFail() public {
+        vm.startPrank(bob);
+
+        vm.expectRevert("Ownable: caller is not the owner");
+        token1.createAndMint(alice, 100, 0);
+
+        uint256 Abal = token1.balanceOf(alice, 1);
+        assertEq(Abal, 0);
+
+        uint256 Bbal = token1.balanceOf(bob, 1);
+        assertEq(Bbal, 0);
+
+        vm.stopPrank();
     }
 
     /**
      * @dev Only admin should be able to mint
      */
-    function testMintPermissions() public {
+    function testMinPermissions() public {
         vm.startPrank(alice);
 
-        token1.mint(bob, "");
+        token1.createAndMint(bob, 100, 0);
+        token1.mint(bob, 1, 50);
 
-        uint256 Abal = token1.balanceOf(alice);
-        assertEq(Abal, 0);
-
-        uint256 Bbal = token1.balanceOf(bob);
-        assertEq(Bbal, 1);
+        uint256 Bbal = token1.balanceOf(bob, 1);
+        assertEq(Bbal, 150);
 
         vm.stopPrank();
     }
@@ -42,79 +72,112 @@ contract KERC1155Test is TestHelper {
      * @dev Non-admin should not be able to mint
      */
     function testMintPermissionsFail() public {
+        vm.startPrank(alice);
+
+        token1.createAndMint(bob, 100, 0);
+
+        vm.stopPrank();
+
         vm.startPrank(bob);
 
         vm.expectRevert("Ownable: caller is not the owner");
-        token1.mint(alice, "");
+        token1.mint(bob, 1, 50);
 
-        uint256 Abal = token1.balanceOf(alice);
-        assertEq(Abal, 0);
-
-        uint256 Bbal = token1.balanceOf(bob);
-        assertEq(Bbal, 0);
+        uint256 Bbal = token1.balanceOf(bob, 1);
+        assertEq(Bbal, 100);
 
         vm.stopPrank();
     }
 
     /**
-     * @dev Infinite token supply should allow mint
+     * @dev Should mint up to finite limit
      */
-    function testInfiniteMint() public {
+    function testMinFinitePass() public {
         vm.startPrank(alice);
 
-        address[] memory recipients = new address[](3);
-        string[] memory uris = new string[](3);
+        token1.createAndMint(bob, 100, 150);
+        token1.mint(bob, 1, 50);
 
-        recipients[0] = alice;
-        recipients[1] = bob;
-        recipients[2] = charlie;
-
-        uris[0] = "x";
-        uris[1] = "y";
-        uris[2] = "z";
-
-        token1.batchMint(recipients, uris);
-
-        uint256 Abal = token1.balanceOf(alice);
-        assertEq(Abal, 1);
-
-        uint256 Bbal = token1.balanceOf(bob);
-        assertEq(Bbal, 1);
-
-        uint256 Cbal = token1.balanceOf(charlie);
-        assertEq(Cbal, 1);
+        uint256 Bbal = token1.balanceOf(bob, 1);
+        assertEq(Bbal, 150);
 
         vm.stopPrank();
     }
 
     /**
-     * @dev Finite token supply should not allow mint
+     * @dev Should not mint over finite limit
      */
-    function testFiniteMintFail() public {
-        vm.startPrank(bob);
+    function testMintFiniteFail() public {
+        vm.startPrank(alice);
+
+        token1.createAndMint(bob, 100, 150);
+
+        vm.expectRevert("Cannot increase token supply");
+        token1.mint(bob, 1, 100);
+
+        uint256 Bbal = token1.balanceOf(bob, 1);
+        assertEq(Bbal, 100);
+
+        vm.stopPrank();
+    }
+
+    /**
+     * @dev Should not mint non-existent id
+     */
+    function testMintNonexistentFail() public {
+        vm.startPrank(alice);
+
+        token1.createAndMint(bob, 100, 0);
+
+        vm.expectRevert("Token id is nonexistent");
+        token1.mint(bob, 2, 100);
+
+        vm.stopPrank();
+    }
+
+    /**
+     * @dev Should batch mint appropriate amounts by id
+     */
+    function testBatchMint() public {
+        vm.startPrank(alice);
+
+        token1.createAndMint(alice, 20, 100);
+        token1.createAndMint(alice, 200, 1000);
+        token1.createAndMint(alice, 1, 3);
 
         address[] memory recipients = new address[](3);
-        string[] memory uris = new string[](3);
+        uint256[] memory tokenIds = new uint256[](3);
+        uint256[] memory amounts = new uint256[](3);
 
-        recipients[0] = alice;
+        recipients[0] = bob;
         recipients[1] = bob;
         recipients[2] = charlie;
 
-        uris[0] = "x";
-        uris[1] = "y";
-        uris[2] = "z";
+        tokenIds[0] = 1;
+        tokenIds[1] = 2;
+        tokenIds[2] = 3;
 
-        vm.expectRevert("Cannot increase token supply");
-        token2.batchMint(recipients, uris);
+        amounts[0] = 80;
+        amounts[1] = 800;
+        amounts[2] = 2;
 
-        uint256 Abal = token2.balanceOf(alice);
-        assertEq(Abal, 0);
+        token1.batchMint(recipients, tokenIds, amounts);
 
-        uint256 Bbal = token2.balanceOf(bob);
-        assertEq(Bbal, 0);
+        uint256 Abal1 = token1.balanceOf(alice, 1);
+        uint256 Abal2 = token1.balanceOf(alice, 2);
+        uint256 Abal3 = token1.balanceOf(alice, 3);
+        uint256 Bbal1 = token1.balanceOf(bob, 1);
+        uint256 Bbal2 = token1.balanceOf(bob, 2);
+        uint256 Cbal3 = token1.balanceOf(charlie, 3);
 
-        uint256 Cbal = token2.balanceOf(charlie);
-        assertEq(Cbal, 0);
+        assertEq(Abal1, 20);
+        assertEq(Abal2, 200);
+        assertEq(Abal3, 1);
+        assertEq(Bbal1, 80);
+        assertEq(Bbal2, 800);
+        assertEq(Cbal3, 2);
+
+        assertEq(token1.getTokenId(), 3);
 
         vm.stopPrank();
     }
@@ -125,77 +188,27 @@ contract KERC1155Test is TestHelper {
     function testUpgradableURI() public {
         vm.startPrank(alice);
 
-        address[] memory recipients = new address[](3);
-        string[] memory uris = new string[](3);
+        assertEq(token1.uri(1), "abc");
 
-        recipients[0] = alice;
-        recipients[1] = bob;
-        recipients[2] = charlie;
-
-        uris[0] = "x";
-        uris[1] = "y";
-        uris[2] = "z";
-
-        token1.batchMint(recipients, uris);
-        assertEq(token1.tokenURI(2), uris[1]);
-
-        token1.updateURI(2, "k");
-        assertEq(token1.tokenURI(2), "k");
+        token1.updateURI("xyz");
+        assertEq(token1.uri(1), "xyz");
 
         vm.stopPrank();
     }
 
     /**
-     * @dev URI should not be updated for non-existent token
+     * @dev URI should not be updated
      */
-    function testUpgradableURINonexistent() public {
+    function testUpgradableURIFail() public {
         vm.startPrank(alice);
 
-        address[] memory recipients = new address[](3);
-        string[] memory uris = new string[](3);
-
-        recipients[0] = alice;
-        recipients[1] = bob;
-        recipients[2] = charlie;
-
-        uris[0] = "x";
-        uris[1] = "y";
-        uris[2] = "z";
-
-        token1.batchMint(recipients, uris);
-
-        vm.expectRevert("URI set of nonexistent token");
-        token1.updateURI(4, "k");
-
-        vm.stopPrank();
-    }
-
-    /**
-     * @dev URI should not be updated after toggle disable
-     */
-    function testUpgradableURIImmutable() public {
-        vm.startPrank(alice);
-
-        address[] memory recipients = new address[](3);
-        string[] memory uris = new string[](3);
-
-        recipients[0] = alice;
-        recipients[1] = bob;
-        recipients[2] = charlie;
-
-        uris[0] = "x";
-        uris[1] = "y";
-        uris[2] = "z";
-
-        token1.batchMint(recipients, uris);
-        assertEq(token1.tokenURI(2), uris[1]);
+        assertEq(token1.uri(1), "abc");
 
         token1.setUriImmutable();
 
         vm.expectRevert("URIs are immutable");
-        token1.updateURI(2, "k");
-
-        assertEq(token1.getTokenId(), uris.length);
+        token1.updateURI("xyz");
+        assertEq(token1.uri(1), "abc");
 
         vm.stopPrank();
     }
@@ -206,10 +219,5 @@ contract KERC1155Test is TestHelper {
         data1.name = "Futuro1";
         data1.symbol = "FTR1";
         data1.uri = "abc";
-
-        data2.admin = bob;
-        data2.name = "Futuro2";
-        data2.symbol = "FTR2";
-        data2.uri = "xyz";
     }
 }

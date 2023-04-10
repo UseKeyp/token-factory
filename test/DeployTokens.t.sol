@@ -13,13 +13,13 @@ contract DeployTokensTest is TestHelper {
     function testDeployTokens() public {
         createInitData();
 
-        address clone20 = factory.deployERC20(333, erc20data);
+        address clone20 = factory.deployERC20(SALT1, erc20data);
         emit log_named_address("Clone:", clone20);
 
-        address clone721 = factory.deployERC721(333, erc721data);
+        address clone721 = factory.deployERC721(SALT2, erc721data);
         emit log_named_address("Clone:", clone721);
 
-        address clone1155 = factory.deployERC1155(333, erc1155data);
+        address clone1155 = factory.deployERC1155(SALT3, erc1155data);
         emit log_named_address("Clone:", clone1155);
     }
 

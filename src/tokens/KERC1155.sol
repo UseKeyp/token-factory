@@ -3,14 +3,18 @@ pragma solidity ^0.8.13;
 
 import {ERC1155Upgradeable} from "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC1155/ERC1155Upgradeable.sol";
 import {OwnableUpgradeable} from "lib/openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import {Counters} from "lib/openzeppelin-contracts/contracts/utils/Counters.sol";
 import {IInitData} from "src/interfaces/IInitData.sol";
 
 contract KERC1155 is ERC1155Upgradeable, OwnableUpgradeable, IInitData {
+    using Counters for Counters.Counter;
+    Counters.Counter public _tokenIds;
+
     // Token contract name
-    string private _name;
+    string public name;
 
     // Token contract symbol
-    string private _symbol;
+    string public symbol;
 
     // Toggle to disable URI upgradeability
     bool internal immutableUri;
@@ -32,8 +36,8 @@ contract KERC1155 is ERC1155Upgradeable, OwnableUpgradeable, IInitData {
 
         __ERC1155_init(data.uri);
 
-        _name = data.name;
-        _symbol = data.symbol;
+        name = data.name;
+        symbol = data.symbol;
     }
 
     /**
@@ -92,21 +96,28 @@ contract KERC1155 is ERC1155Upgradeable, OwnableUpgradeable, IInitData {
     }
 
     /**
-     * @dev Mint token(s) to recipient
+     * @dev Create and mint token(s) to recipient, increment count
      */
-    function creatAndMint(
+    function createAndMint(
         address recipient,
-        uint256 tokenId,
         uint256 amount,
         uint256 _maxSupply
     ) external onlyOwner {
-        require(currentSupply[tokenId] == 0, "Token id already exists");
+        _tokenIds.increment();
+        uint256 tokenId = _tokenIds.current();
 
         currentSupply[tokenId] = amount;
 
         if (_maxSupply > 0) maxSupply[tokenId] = _maxSupply;
 
         _mint(recipient, tokenId, amount, "");
+    }
+
+    /**
+     * @dev Get id of last minted token
+     */
+    function getTokenId() external view returns (uint256) {
+        return _tokenIds.current();
     }
 
     /**
@@ -121,19 +132,5 @@ contract KERC1155 is ERC1155Upgradeable, OwnableUpgradeable, IInitData {
      */
     function setUriImmutable() external onlyOwner isImmutable {
         immutableUri = true;
-    }
-
-    /**
-     * @dev Return the name of the token
-     */
-    function name() public view returns (string memory) {
-        return _name;
-    }
-
-    /**
-     * @dev Return the symbol of the token
-     */
-    function symbol() public view returns (string memory) {
-        return _symbol;
     }
 }

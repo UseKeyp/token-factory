@@ -91,6 +91,16 @@ contract KERC721 is ERC721Upgradeable, OwnableUpgradeable, IInitData {
     }
 
     /**
+     * @dev See {IERC721Metadata-tokenURI}.
+     */
+    function tokenURI(
+        uint256 tokenId
+    ) public view override returns (string memory) {
+        _requireMinted(tokenId);
+        return tokenURIs[tokenId];
+    }
+
+    /**
      * @dev Update token URI. Can be Disabled
      */
     function updateURI(
@@ -105,16 +115,6 @@ contract KERC721 is ERC721Upgradeable, OwnableUpgradeable, IInitData {
      */
     function setUriImmutable() external onlyOwner isImmutable {
         immutableUri = true;
-    }
-
-    /**
-     * @dev See {IERC721Metadata-tokenURI}.
-     */
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
-        _requireMinted(tokenId);
-        return tokenURIs[tokenId];
     }
 
     /**

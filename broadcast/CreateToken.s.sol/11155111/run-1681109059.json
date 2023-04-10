@@ -60,7 +60,7 @@
       "to": "0x4e59b44847b379578588920cA78FbF26c0B4956C",
       "cumulativeGasUsed": "0xefb7ff",
       "gasUsed": "0xefb7ff",
-      "contractAddress": "0xBF504F2278E153cB991186167E415D9081798F7C",
+      "contractAddress": null,
       "logs": [
         {
           "address": "0xBF504F2278E153cB991186167E415D9081798F7C",
@@ -177,7 +177,7 @@
   "pending": [],
   "path": "/Users/hunterking/Desktop/keyp/token-factory/broadcast/CreateToken.s.sol/11155111/run-latest.json",
   "returns": {},
-  "timestamp": 1681109106,
+  "timestamp": 1681109059,
   "chain": 11155111,
   "multi": false,
   "commit": "93cf0dd"

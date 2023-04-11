@@ -7,11 +7,6 @@ import {IInitData} from "src/interfaces/IInitData.sol";
 
 // GOERLI DEPLOYMENT:
 // forge script script/networkTests/CreateToken.s.sol:CreateTokenScript --rpc-url $RUG --private-key $PK --broadcast --verify --etherscan-api-key $EK -vvvv
-// forge script script/networkTests/CreateToken.s.sol:CreateTokenScript --rpc-url $RUG --private-key $PK -vvvv
-
-// SEPOLIA DEPLOYMENT:
-// forge script script/networkTests/CreateToken.s.sol:CreateTokenScript --rpc-url $RUS --private-key $PK --broadcast --verify --etherscan-api-key $EK -vvvv
-// forge script script/networkTests/CreateToken.s.sol:CreateTokenScript --rpc-url $RUS --private-key $PK -vvvv
 
 contract CreateTokenScript is Script, IInitData {
     TokenFactory public factory;
@@ -58,17 +53,3 @@ contract CreateTokenScript is Script, IInitData {
         erc1155data.uri = "xyz";
     }
 }
-
-/**
- * SEPOLIA DEPLOYMENT:
- * factory -
- * erc20   -
- * erc721  -
- * erc1155 -
- *
- * GOERLI  DEPLOYMENT:
- * factory - 0xBF504F2278E153cB991186167E415D9081798F7C
- * erc20   - 0x3dcCD21691c24B3344BC86d6358FF87b30EB4dFE
- * erc721  - 0x5b73C5498c1E3b4dbA84de0F1833c4a029d90519
- * erc1155 - 0x5b73C5498c1E3b4dbA84de0F1833c4a029d90519
- */

@@ -19,9 +19,14 @@ contract TokenFactory is IInitData, AccessControl {
     event DeployedToken(address tokenAddress, uint256 salt);
 
     /**
-     * @dev Get creation bytecode of token contracts, add admin
+     * @dev Deploy singletons for verification on clone deployments,
+     * get creation bytecode of token contracts, add admin
      */
     constructor(address administrator) {
+        new KERC20();
+        new KERC721();
+        new KERC1155();
+
         kerc20 = type(KERC20).creationCode;
         kerc721 = type(KERC721).creationCode;
         kerc1155 = type(KERC1155).creationCode;

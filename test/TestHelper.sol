@@ -22,6 +22,7 @@ contract TestHelper is Test, IInitData {
 
     function setUp() public virtual {
         factory = new TokenFactory(admin);
+
         emit log_named_address("Factory:", address(factory));
     }
 }

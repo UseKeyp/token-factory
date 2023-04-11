@@ -5,16 +5,16 @@
 Customizable options for tokens:
 
 ERC20
-- name, symbol, 
+- name, symbol
 - limited / unlimited token supply
 
 ERC721
-- name, symbol, 
+- name, symbol
 - limited / unlimited token supply
 - token specific URI
 
 ERC1155
-- name, symbol, 
+- name, symbol
 - token-type specific limited / unlimited token supply
 - token-type specific URI
 

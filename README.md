@@ -5,16 +5,16 @@
 Customizable options for tokens:
 
 ERC20
-- name, symbol, 
+- name, symbol
 - limited / unlimited token supply
 
 ERC721
-- name, symbol, 
+- name, symbol
 - limited / unlimited token supply
 - token specific URI
 
 ERC1155
-- name, symbol, 
+- name, symbol
 - token-type specific limited / unlimited token supply
 - token-type specific URI
 
@@ -61,6 +61,22 @@ The params for each token deployment function are found in the `IInitData` inter
     }
     
 ```
+## Factory Contract Verification
+
+#### Sourcify - Provides verification for all EVM chains
+
+Plugin for Foundry: https://docs.sourcify.dev/docs/tooling/foundry/
+
+In terminal, add local vars: `RU`, `PK` (RPC-URL, Private Key). Then run the following script:
+
+`forge script script/DeployFactory.s.sol:DeployFactoryScript --rpc-url $RU --private-key $PK --broadcast --verify --verifier sourcify -vvvv`
+
+#### Etherscan
+
+In terminal, add local vars: `RU`, `PK`, `EK` (RPC-URL, Private Key, Etherscan Key). Then run the following script:
+
+`forge script script/DeployFactory.s.sol:DeployFactoryScript --rpc-url $RU --private-key $PK --broadcast --verify --etherscan-api-key $EK -vvvv`
+
 ## License
 
 MIT License

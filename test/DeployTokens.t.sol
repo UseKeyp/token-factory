@@ -30,7 +30,7 @@ contract DeployTokensTest is TestHelper {
         erc20data.initSupply = 100;
         erc20data.name = "Futuro";
         erc20data.symbol = "FTR";
-        erc20data.finiteSupply = false;
+        erc20data.infiniteSupply = false;
 
         // erc721 init data
         erc721data.admin = address(this);

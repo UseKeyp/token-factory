@@ -40,7 +40,7 @@ contract CreateTokenScript is Script, IInitData {
         erc20data.initSupply = 100;
         erc20data.name = "Futuro";
         erc20data.symbol = "FTR";
-        erc20data.finiteSupply = false;
+        erc20data.infiniteSupply = false;
 
         erc721data.admin = address(this);
         erc721data.maxSupply = 100;

@@ -7,12 +7,12 @@ import {IInitData} from "src/interfaces/IInitData.sol";
 
 contract KERC20 is ERC20Upgradeable, OwnableUpgradeable, IInitData {
     // Infinite or finite token suppply
-    bool internal finiteSupply;
+    bool internal infiniteSupply;
 
     event Mint(address recipient, uint256 amount);
 
     /**
-     * @dev Initialize, set owner of contract, set supply to inifinit or finite
+     * @dev Initialize, set owner of contract, set supply to infinite or finite
      */
     function initialize(ERC20Data calldata data) external initializer {
         __Ownable_init();
@@ -20,7 +20,7 @@ contract KERC20 is ERC20Upgradeable, OwnableUpgradeable, IInitData {
 
         __ERC20_init(data.name, data.symbol);
 
-        if (data.finiteSupply) finiteSupply = true;
+        if (data.infiniteSupply) infiniteSupply = true;
         _mint(data.recipient, data.initSupply);
     }
 
@@ -28,7 +28,7 @@ contract KERC20 is ERC20Upgradeable, OwnableUpgradeable, IInitData {
      * @dev Mint token to recipient
      */
     function mint(address recipient, uint256 amount) external onlyOwner {
-        require(!finiteSupply, "Cannot increase token supply");
+        require(infiniteSupply, "Cannot increase token supply");
         _mint(recipient, amount);
         emit Mint(recipient, amount);
     }

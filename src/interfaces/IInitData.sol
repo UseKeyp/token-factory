@@ -8,7 +8,7 @@ interface IInitData {
         uint256 initSupply;
         string name;
         string symbol;
-        bool finiteSupply;
+        bool infiniteSupply;
     }
 
     struct ERC721Data {

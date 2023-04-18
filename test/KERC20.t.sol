@@ -92,13 +92,13 @@ contract KERC20Test is TestHelper {
         data1.initSupply = 100 * 1e18;
         data1.name = "Futuro1";
         data1.symbol = "FTR1";
-        data1.finiteSupply = false;
+        data1.infiniteSupply = true;
 
         data2.admin = alice;
         data2.recipient = charlie;
         data2.initSupply = 200 * 1e18;
         data2.name = "Futuro2";
         data2.symbol = "FTR2";
-        data2.finiteSupply = true;
+        data2.infiniteSupply = false;
     }
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.11;
 
 import {AccessControl} from "lib/openzeppelin-contracts/contracts/access/AccessControl.sol";
 import {IInitData} from "src/interfaces/IInitData.sol";
@@ -23,10 +23,6 @@ contract TokenFactory is IInitData, AccessControl {
      * get creation bytecode of token contracts, add admin
      */
     constructor(address administrator) {
-        new KERC20();
-        new KERC721();
-        new KERC1155();
-
         kerc20 = type(KERC20).creationCode;
         kerc721 = type(KERC721).creationCode;
         kerc1155 = type(KERC1155).creationCode;

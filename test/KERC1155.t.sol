@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.11;
 
 import "test/TestHelper.sol";
 import {KERC1155} from "src/tokens/KERC1155.sol";

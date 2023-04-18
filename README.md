@@ -31,6 +31,8 @@ After Foundry is installed and this repo has been cloned, run the following comm
 
 Run the deploy factory script in the script folder to any EVM network `DeployFactory.s.sol`
 
+`forge script script/DeployFactory.s.sol:DeployFactoryScript --rpc-url $RPC_URL_API --private-key $PRIVATE_KEY --broadcast -vvvv`
+
 This script uses the CREATE2 opcode, so it will have the same contract address on any network, dependent on the `SALT`
 
 To deploy token contracts, call `deployERC20`, `deployERC721`, or `deployERC1155` on the factory. These functions also use CREATE2 opcode, so they will deploy to the same contract address on each EVM network.
@@ -61,21 +63,21 @@ The params for each token deployment function are found in the `IInitData` inter
     }
     
 ```
-## Factory Contract Verification
+## Contract Verification
 
-#### Sourcify - Provides verification for all EVM chains
+#### Forge Verify-Contract: https://book.getfoundry.sh/reference/forge/forge-verify-contract
 
-Plugin for Foundry: https://docs.sourcify.dev/docs/tooling/foundry/
+Factory Verification
 
-In terminal, add local vars: `RU`, `PK` (RPC-URL, Private Key). Then run the following script:
+`forge verify-contract --chain <ID> --flatten --watch --compiler-version "v0.8.11+commit.d7f03943" --constructor-args $(cast abi-encode "constructor(address)" <EOA_ADDRESS>) <CONTRACT_ADDRESS> TokenFactory $BLOCK_EXPLORER_KEY`
 
-`forge script script/DeployFactory.s.sol:DeployFactoryScript --rpc-url $RU --private-key $PK --broadcast --verify --verifier sourcify -vvvv`
+Token Verification
 
-#### Etherscan
+`forge verify-contract --chain <ID> --flatten --watch --compiler-version "v0.8.11+commit.d7f03943" <CONTRACT_ADDRESS> KERC20 $BLOCK_EXPLORER_KEY`
 
-In terminal, add local vars: `RU`, `PK`, `EK` (RPC-URL, Private Key, Etherscan Key). Then run the following script:
+`forge verify-contract --chain <ID> --flatten --watch --compiler-version "v0.8.11+commit.d7f03943" <CONTRACT_ADDRESS> KERC721 $BLOCK_EXPLORER_KEY`
 
-`forge script script/DeployFactory.s.sol:DeployFactoryScript --rpc-url $RU --private-key $PK --broadcast --verify --etherscan-api-key $EK -vvvv`
+`forge verify-contract --chain <ID> --flatten --watch --compiler-version "v0.8.11+commit.d7f03943" <CONTRACT_ADDRESS> KERC1155 $BLOCK_EXPLORER_KEY`
 
 ## License
 
